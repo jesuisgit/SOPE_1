@@ -9,9 +9,18 @@
 <body>
   <div class="container">
     <h1>Quiz de Sistemas Operacionais</h1>
-    <form id="quizForm"></form>
-    <button type="button" onclick="corrigir()">Corrigir</button>
+
+    <div id="inicio">
+      <label for="nome">Digite seu nome:</label>
+      <input type="text" id="nome" />
+      <button onclick="iniciarQuiz()">Iniciar Quiz</button>
+    </div>
+
+    <form id="quizForm" style="display:none;"></form>
+    <button type="button" id="botaoCorrigir" onclick="corrigir()" style="display:none;">Corrigir</button>
+
     <div id="resultado"></div>
+    <div id="ranking"></div>
   </div>
   <script src="script.js"></script>
 </body>

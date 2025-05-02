@@ -226,6 +226,75 @@ const perguntas = [
   
     document.getElementById("resultado").innerText = `Você acertou ${acertos} de ${perguntas.length} questões.`;
   }
-  
+    
+let nomeUsuario = "";
+
+function iniciarQuiz() {
+  const inputNome = document.getElementById("nome").value.trim();
+  if (inputNome === "") {
+    alert("Por favor, digite seu nome antes de começar.");
+    return;
+  }
+
+  nomeUsuario = inputNome;
+  document.getElementById("inicio").style.display = "none";
+  document.getElementById("quizForm").style.display = "block";
+  document.getElementById("botaoCorrigir").style.display = "block";
   carregarQuiz();
-  
+}
+
+function corrigir() {
+  let acertos = 0;
+
+  perguntas.forEach((q, index) => {
+    const marcada = document.querySelector(`input[name=q${index}]:checked`);
+    const divPergunta = document.getElementById(`pergunta-${index}`);
+    divPergunta.classList.remove("correta", "errada");
+    const explicAntiga = divPergunta.querySelector(".explicacao");
+    if (explicAntiga) explicAntiga.remove();
+
+    const explic = document.createElement("div");
+    explic.className = "explicacao";
+    explic.innerText = `Resposta correta: ${q.opcoes[q.resposta]} — ${q.explicacao}`;
+    divPergunta.appendChild(explic);
+
+    if (marcada) {
+      if (parseInt(marcada.value) === q.resposta) {
+        acertos++;
+        divPergunta.classList.add("correta");
+      } else {
+        divPergunta.classList.add("errada");
+      }
+    } else {
+      divPergunta.classList.add("errada");
+    }
+  });
+
+  document.getElementById("resultado").innerText =
+    `${nomeUsuario}, você acertou ${acertos} de ${perguntas.length} questões.`;
+
+  salvarNoRanking(nomeUsuario, acertos);
+  exibirRanking();
+}
+
+function salvarNoRanking(nome, pontos) {
+  const ranking = JSON.parse(localStorage.getItem("rankingSO")) || [];
+  ranking.push({ nome, pontos });
+  ranking.sort((a, b) => b.pontos - a.pontos);
+  localStorage.setItem("rankingSO", JSON.stringify(ranking.slice(0, 5)));
+}
+
+function exibirRanking() {
+  const ranking = JSON.parse(localStorage.getItem("rankingSO")) || [];
+  const div = document.getElementById("ranking");
+  div.innerHTML = "<h2>Ranking - Top 5</h2>";
+  const lista = document.createElement("ul");
+
+  ranking.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerText = `${i + 1}. ${item.nome} — ${item.pontos} acertos`;
+    lista.appendChild(li);
+  });
+
+  div.appendChild(lista);
+}
